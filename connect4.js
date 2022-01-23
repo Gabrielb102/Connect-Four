@@ -56,20 +56,18 @@ const makeHtmlBoard = () => {
 
 const findSpotForCol = x => {
   for (y = 0; y < HEIGHT; y++) {
-    if (board[y][x]) {
-    continue;
-    } else {
+    if (!board[y][x]) {
       return y;
     }
-    return null;
   }
+  return null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 const placeInTable = (y, x) => {
   const piece = document.createElement("div");
-  piece.classList.add("piece", "p" + currPlayer);
+  piece.className = `piece p${currPlayer}`;
   const cell = document.getElementById(`${y}-${x}`)
   cell.appendChild(piece);
 }
@@ -88,7 +86,7 @@ const endGame = (msg) => {
   }
 }
 
-//check if board is full
+//check if board is full Peter's rec: just check the top row, the bottom will have to be full anyway, just use every, don't need a full function
 const isTruthy = (input) => input ? true : false;
 const isFull = () => {
   console.log("checking if full")
@@ -119,20 +117,19 @@ function handleClick(evt) {
   // TODO: add line to update in-memory board
   placeInTable(y, x);
   board[y][x] = currPlayer;
+
+  // check for win Peter's rec: do it before you switch players
+  if (checkForWin()) {
+    return endGame(`Player ${currPlayer} won!`);
+  } else if (isFull()) {
+    return endGame("TIEGAME");
+  }  
   
   if (currPlayer === 1) {
     currPlayer = 2;
   } else {
     currPlayer = 1;
   }
-
-  // check for win
-  if (checkForWin()) {
-    return endGame(`Player ${currPlayer} won!`);
-  } else if (isFull()) {
-    return endGame("TIEGAME");
-  }
-  
 
 }
 
